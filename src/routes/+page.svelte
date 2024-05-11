@@ -1,23 +1,28 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+  import Graph1 from '$lib/Graph1.svelte'; // Import the Graph1 component
 
-  import Graph1 from '$lib/Graph1.svelte'; // Import the component
+  const dispatch = createEventDispatcher(); // Event dispatcher to communicate with parent components
 
-//   let selectedYear = 2024; // Default selected year
+  let selectedFileName = ''; // Initialize the selected file name variable
 
-// function changeYear(year) {
-//   selectedYear = year;
-// }
+  // Function to handle button click and set the selected file name
+  function selectFileName(fileName) {
+    selectedFileName = fileName;
+    dispatch('fileSelected', { fileName }); // Dispatch event to communicate with parent components
+  }
 </script>
 
-<!-- <button on:click={() => changeYear(2022)}>2022</button>
-<button on:click={() => changeYear(2023)}>2023</button>
-<button on:click={() => changeYear(2024)}>2024</button> -->
+<div>
+  <!-- Button to select "Forcast_ActualSales2022" file name -->
+  <button on:click={() => selectFileName("Forcast_ActualSales2022")}>Load 2022 Data</button>
+  <!-- Button to select "Forcast_ActualSales2023" file name -->
+  <button on:click={() => selectFileName("Forcast_ActualSales2023")}>Load 2023 Data</button>
+  <!-- Button to select "Forcast_ActualSales2024" file name -->
+  <button on:click={() => selectFileName("Forcast_ActualSales2024")}>Load 2024 Data</button>
 
-<Graph1 fileName="Forcast_ActualSales2023
-"  />
-
-<!-- Render the component that displays the line graph -->
-<!-- <Dynamic_line /> -->
-<!-- <WithLegend /> -->
-<!-- <WithReal /> -->
-<!-- <Graph1 /> -->
+  <!-- Render Graph1 component with the selected file name -->
+  {#if selectedFileName}
+    <Graph1 fileName={selectedFileName} />
+  {/if}
+</div>
