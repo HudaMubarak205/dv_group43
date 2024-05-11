@@ -1,17 +1,16 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
   import { writable } from 'svelte/store';
   import Graph1 from '$lib/Graph1.svelte'; // Import the Graph1 component
+  import { setContext } from 'svelte'
 
-  const dispatch = createEventDispatcher(); // Event dispatcher to communicate with parent components
+
 
   // Initialize the selected file name as a writable store
-  $: selectedFileName = writable('');
-  $: fileName = "Forcast_ActualSales2024";
+  let selectedFileName = writable('');
+  // $: fileName = "Forcast_ActualSales2024";
 // Function to handle button click and set the selected file name
-function selectFileName($fileName) {
-  selectedFileName.set($fileName); // Set the value of the writable store
-  dispatch('fileSelected', { $fileName }); // Dispatch event to communicate with parent components
+function selectFileName(fileName) {
+  selectedFileName.set(fileName); // Set the value of the writable store
 }
 </script>
 
@@ -23,8 +22,15 @@ function selectFileName($fileName) {
   <!-- Button to select "Forcast_ActualSales2024" file name -->
   <button on:click={() => selectFileName("Forcast_ActualSales2024")}>Load 2024 Data</button>
 
-  <!-- Render Graph1 component with the selected file name if available -->
-  {#if $selectedFileName}
-    <Graph1 fileName={$selectedFileName} />
+
+  {#if $selectedFileName === "Forcast_ActualSales2022"}
+    <!-- <input bind:value={$selectedFileName} /> -->
+    <Graph1 fileName="Forcast_ActualSales2022" />
+  {:else if $selectedFileName === "Forcast_ActualSales2023"}
+    <!-- <input bind:value={$selectedFileName} /> -->
+    <Graph1 fileName="Forcast_ActualSales2023" />
+  {:else if $selectedFileName === "Forcast_ActualSales2024"}
+    <!-- <input bind:value={$selectedFileName} /> -->
+    <Graph1 fileName="Forcast_ActualSales2024" />
   {/if}
 </div>
