@@ -140,6 +140,11 @@
       <path class="line sales-line" d={salesLineGenerator(csvData)} />
       <!-- Inventory area -->
       <path class="inventory-area" d={inventoryAreaGenerator(csvData)} />
+      {#each csvData as item}
+        {#if Math.abs(item.Inventory_count - item.Sales_count) >= 4500}
+          <circle cx={xScale(item.month)} cy={yScale(item.Sales_count)} r="7" fill="orange" />
+        {/if}
+      {/each}
     </svg>
   {/if}
 </div>
