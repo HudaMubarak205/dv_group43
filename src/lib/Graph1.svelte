@@ -51,11 +51,12 @@
 <style>
   .chart {
     position: relative;
-    width: 500px;
+    width: 600px; /* Increased width */
     height: 300px;
-    border: 1px solid black;
-    margin: 20px;
+    /* border: 1px solid black; */
+    margin: 20px auto; /* Keep the border and center the chart */
     padding: 20px;
+    margin-left: 50px; /* Move the chart to the right */
   }
 
   .line {
@@ -75,7 +76,7 @@
   .legend {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 20px; /* Adjusted right positioning */
   }
 
   .legend-item {
@@ -90,16 +91,17 @@
     margin-right: 5px;
   }
 
+  .legend-item .color-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%; /* Make it a circle */
+    margin-right: 5px;
+  }
+
   .y-axis {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px 0;
-    margin-left: -40px; /* Adjust for axis labels */
+    font-size: "10px";
+    font-family: sans-serif;
+    text-anchor: "end";
   }
 
   .axis-text {
@@ -110,14 +112,22 @@
 
 <div class="chart">
   <!-- Legend -->
-  <div class="legend" style="top: 10px; right: 10px;">
+  <div class="legend">
     <div class="legend-item">
       <div class="color-box" style="background-color: blue;"></div>
-      <span>Sales</span>
+      <span>Forecasted number<br>of orders</span> <!-- Two lines for the first item -->
     </div>
     <div class="legend-item">
-      <div class="color-box" style="background-color: red;"></div>
+      <div class="color-box" style="background-color: rgba(255, 0, 0, 0.5);"></div> <!-- Updated with red color and opacity -->
       <span>Inventory</span>
+    </div>
+    <div class="legend-item">
+      <div class="color-circle" style="background-color: green;"></div>
+      <span>Overstock</span>
+    </div>
+    <div class="legend-item">
+      <div class="color-circle" style="background-color: red;"></div>
+      <span>Out of stock</span>
     </div>
   </div>
 
@@ -132,19 +142,32 @@
         {/each}
       </g>
       <!-- Y-axis -->
-      <!-- Removed Y-axis vertical line -->
-      {#each yScale.ticks(5) as tick}
-        <text class="axis-text" x="-20" y={yScale(tick)}>{tick}</text>
-      {/each}
+      <g class="y-axis">
+        <!-- Y-axis line -->
+        <line x1="0" y1="0" x2="0" y2="200" stroke="black" />
+        <!-- Y-axis ticks and labels -->
+        {#each yScale.ticks(5) as tick}
+          <g transform={`translate(0, ${yScale(tick)})`}>
+            <!-- Adjusted text positioning to the left of the y-axis line -->
+            <text class="axis-text" x="50" y="3">{tick}</text>
+            <!-- Adjusted tick line to extend to the left -->
+            <line x1="-5" y1="0" x2="0" y2="0" stroke="black" />
+          </g>
+        {/each}
+      </g>
       <!-- Sales line -->
       <path class="line sales-line" d={salesLineGenerator(csvData)} />
       <!-- Inventory area -->
       <path class="inventory-area" d={inventoryAreaGenerator(csvData)} />
       {#each csvData as item}
-        {#if Math.abs(item.Inventory_count - item.Sales_count) >= 4500}
-          <circle cx={xScale(item.month)} cy={yScale(item.Sales_count)} r="7" fill="orange" />
+        {#if item.Inventory_count - item.Sales_count >= 4500}
+          <circle cx={xScale(item.month)} cy={yScale(item.Sales_count)} r="7" fill="red" /> <!-- Green circle -->
+        {:else if item.Inventory_count - item.Sales_count <= -4500}
+          <circle cx={xScale(item.month)} cy={yScale(item.Sales_count)} r="7" fill="green" /> <!-- Red circle -->
         {/if}
       {/each}
     </svg>
   {/if}
 </div>
+
+
